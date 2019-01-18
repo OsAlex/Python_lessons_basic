@@ -1,9 +1,25 @@
+
+__author__ = 'Осипов Алексей Петрович'
+
 # Задание-1: уравнение прямой вида y = kx + b задано в виде строки.
 # Определить координату y точки с заданной координатой x.
 
 equation = 'y = -12x + 11111140.2121'
 x = 2.5
 # вычислите и выведите y
+
+print("\n#1:\n")
+
+import re
+
+match = re.search('([0-9\-]+)x', equation)
+k = float(match.group(1))
+
+match = re.search('\+\s([\d\.\-]+)', equation)
+b = float(match.group(1))
+
+y = k * x + b
+print(y)
 
 
 # Задание-2: Дата задана в виде строки формата 'dd.mm.yyyy'.
@@ -16,14 +32,39 @@ x = 2.5
 # 4. Длина исходной строки для частей должна быть в соответствии с форматом 
 #  (т.е. 2 символа для дня, 2 - для месяца, 4 - для года)
 
+dates = []
 # Пример корректной даты
-date = '01.11.1985'
+dates.append('01.11.1985')
 
 # Примеры некорректных дат
-date = '01.22.1001'
-date = '1.12.1001'
-date = '-2.10.3001'
+dates.append('01.22.1001')
+dates.append('1.12.1001')
+dates.append('-2.10.3001')
 
+print("\n#2:\n")
+
+for date in dates:
+    day, month, year = date.split('.')
+
+    if len(day) != 2 or len(month) != 2 or len(year) != 4:
+        print('wrong')
+        continue
+
+    day, month, year = [int(day), int(month), int(year)]
+
+    if ((month % 2 == 0) and (day < 1 or day > 30)) or ((month % 2 != 0) and (day < 1 or day > 31)):
+        print('wrong')
+        continue
+
+    if month not in range(1, 12):
+        print('wrong')
+        continue
+
+    if year not in range(1, 9999):
+        print('wrong')
+        continue
+
+    print('correct')
 
 # Задание-3: "Перевёрнутая башня" (Задача олимпиадного уровня)
 #
@@ -54,3 +95,27 @@ date = '-2.10.3001'
 #
 # Вход: 11
 # Выход: 5 3
+
+print("\n#3:\n")
+
+print('Input room number: ')
+needRoom = abs(int(input()))
+indexLevelRepeat = level = room = 0
+
+while room < needRoom:
+    indexLevelRepeat = indexLevelRepeat + 1
+    for repeatLevel in range(indexLevelRepeat):
+        for indexRoom in range(indexLevelRepeat):
+            room = room + 1
+            # print(f'Level: {level} room: {room} i: {i} j: {repeatLevel} jj: {indexRoom}')
+
+            if room >= needRoom:
+                break
+
+        level = level + 1
+
+        if room >= needRoom:
+            break
+
+# print(f'Level number: {level} index room on level: {indexRoom + 1}')
+print(level, indexRoom + 1)
