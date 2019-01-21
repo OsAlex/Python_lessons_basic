@@ -9,6 +9,40 @@
 # Ввод: -2/3 - -2
 # Вывод: 1 1/3
 
+import re
+
+def sum_drobi(str_input):
+
+    [(one_drob_up, one_drob_down, znak, two_drob_up, two_drob_down)] = re.findall(r"(\-?\d)\/?(\d?)\s+([\-\+]+)\s+(\-?\d)\/?(\d?)", str_input)
+    znak = int(znak + '1')
+
+    one_drob_down = one_drob_down if len(one_drob_down) > 0 else 1
+    two_drob_down = two_drob_down if len(two_drob_down) > 0 else 1
+
+    # print(one_drob_up, one_drob_down, znak, two_drob_up, two_drob_down)
+
+    result_up = int(one_drob_up) * int(two_drob_down) + znak * (int(two_drob_up) * int(one_drob_down))
+    znamenatel = int(one_drob_down) * int(two_drob_down)
+    celoe = result_up // znamenatel
+
+    if abs(celoe) > 0:
+        result_up = abs(result_up) - abs(celoe) * znamenatel
+
+    print(celoe, result_up, znamenatel)
+
+    a = result_up
+    b = znamenatel
+    while b != 0:
+        a, b = b, a % b
+
+    result_up = int(result_up / a)
+    znamenatel = int(znamenatel / a)
+
+    return str(celoe) + str(result_up) + '/' + str(znamenatel)
+
+print(sum_drobi('-5 + -4/7'))
+print(sum_drobi('-2/3 - -2'))
+
 
 # Задание-2:
 # Дана ведомость расчета заработной платы (файл "data/workers").
