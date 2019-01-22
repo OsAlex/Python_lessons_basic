@@ -82,6 +82,40 @@ print(sum_drobi('-2/3 - -2'))
 # они получают удвоенную ЗП, пропорциональную норме.
 # Кол-во часов, которые были отработаны, указаны в файле "data/hours_of"
 
+import os
+import re
+
+data = {}
+with open(os.path.join('data', 'workers'), 'r', encoding='UTF-8') as f:
+    for line in f:
+        res = re.findall(r"(\S+)\s+(\S+)\s+(\d+)\s+(\S+)\s+(\d+)", line)
+        if len(res) > 0:
+            [name, family, salary, dolz, norm_hours] = res[0]
+            data[name + ' ' + family] = {
+                    'salary': int(salary),
+                    'dolz': dolz,
+                    'norm_hours': int(norm_hours)
+                }
+
+with open(os.path.join('data', 'hours_of'), 'r', encoding='UTF-8') as f:
+    for line in f:
+        res = re.findall(r"(\S+)\s+(\S+)\s+(\d+)", line)
+        if len(res) > 0:
+            [name, family, work_hours] = res[0]
+            data[name + ' ' + family]['work_hours'] = int(work_hours)
+
+for worker in data:
+    worker_data = data.get(worker)
+    salary = worker_data.get('salary')
+    work_hours = worker_data.get('work_hours')
+    norm_hours = worker_data.get('norm_hours')
+
+    salary_out = salary
+    if work_hours - norm_hours > 0:
+        salary_out = salary_out + 2 * (salary / norm_hours) * (work_hours - norm_hours)
+    if work_hours - norm_hours < 0:
+        salary_out = salary_out - (salary / norm_hours) * (norm_hours - work_hours)
+    print(worker, salary_out)
 
 # Задание-3:
 # Дан файл ("data/fruits") со списком фруктов.
@@ -95,3 +129,23 @@ print(sum_drobi('-2/3 - -2'))
 # Подсказка:
 # Чтобы получить список больших букв русского алфавита:
 # print(list(map(chr, range(ord('А'), ord('Я')+1))))
+
+import json
+
+data = {}
+with open(os.path.join('data', 'fruits.txt'), 'r', encoding='UTF-8') as f:
+    for line in f:
+        line = line.strip(' \t\n\r')
+        if len(line) > 0:
+            first_symbol = line[0]
+            if data.get(first_symbol) == None:
+                data[first_symbol] = []
+            data[first_symbol].append(line)
+
+
+for symbol in data:
+    symbol_data = data.get(symbol)
+    with open(os.path.join('data', 'fruits_' + symbol), 'w', encoding='UTF-8', ) as f:
+        json.dump(symbol_data, f, ensure_ascii=False)
+
+
