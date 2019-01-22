@@ -13,34 +13,64 @@ import re
 
 def sum_drobi(str_input):
 
-    [(one_drob_up, one_drob_down, znak, two_drob_up, two_drob_down)] = re.findall(r"(\-?\d)\/?(\d?)\s+([\-\+]+)\s+(\-?\d)\/?(\d?)", str_input)
+    res = re.findall(r"(\-?\d+)\/?(\d*?)\s+([\-\+]+)\s+(\-?\d+)\/?(\d*)", str_input)
+
+    one_drob_up = one_drob_down = two_drob_up = two_drob_down = 1
+    i = 0
+    for element in res[0]:
+        if i == 0:
+            one_drob_up = element
+        if i == 1:
+            one_drob_down = element
+        if i == 2:
+            znak = element
+        if i == 3:
+            two_drob_up = element
+        if i == 4:
+            two_drob_down = element
+        i += 1
+
+    # print(one_drob_up, one_drob_down, two_drob_up, two_drob_down)
+
     znak = int(znak + '1')
+    [one_drob_up, one_drob_down, two_drob_up, two_drob_down] = map(lambda x: int(x) if len(x) else 0, [one_drob_up, one_drob_down, two_drob_up, two_drob_down])
+    # print(one_drob_up, one_drob_down, two_drob_up, two_drob_down)
+    if one_drob_down == 0:
+        one_drob_down = abs(one_drob_up)
+        one_drob_up = one_drob_up * one_drob_down
 
-    one_drob_down = one_drob_down if len(one_drob_down) > 0 else 1
-    two_drob_down = two_drob_down if len(two_drob_down) > 0 else 1
+    if two_drob_down == 0:
+        two_drob_down = abs(two_drob_up)
+        two_drob_up = two_drob_up * two_drob_down
 
-    # print(one_drob_up, one_drob_down, znak, two_drob_up, two_drob_down)
+    # print(one_drob_up, one_drob_down, two_drob_up, two_drob_down)
+    result_up = one_drob_up * two_drob_down + znak * two_drob_up * one_drob_down
+    znamenatel = one_drob_down * two_drob_down
 
-    result_up = int(one_drob_up) * int(two_drob_down) + znak * (int(two_drob_up) * int(one_drob_down))
-    znamenatel = int(one_drob_down) * int(two_drob_down)
     celoe = result_up // znamenatel
+    # print(celoe, result_up, znamenatel)
 
     if abs(celoe) > 0:
         result_up = abs(result_up) - abs(celoe) * znamenatel
+        if result_up == 0:
+            znamenatel = 0
 
-    print(celoe, result_up, znamenatel)
+    # print(celoe, result_up, znamenatel)
 
-    a = result_up
-    b = znamenatel
-    while b != 0:
-        a, b = b, a % b
+    if result_up > 0:
+        a = result_up
+        b = znamenatel
+        while b != 0:
+            a, b = b, a % b
 
-    result_up = int(result_up / a)
-    znamenatel = int(znamenatel / a)
+        result_up = int(result_up / a)
+        znamenatel = int(znamenatel / a)
 
-    return str(celoe) + str(result_up) + '/' + str(znamenatel)
+        return str(celoe) + ' ' + str(result_up) + '/' + str(znamenatel)
+    else:
+        return str(celoe)
 
-print(sum_drobi('-5 + -4/7'))
+print(sum_drobi('5/6 + 4/7'))
 print(sum_drobi('-2/3 - -2'))
 
 
