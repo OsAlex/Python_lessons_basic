@@ -4,7 +4,7 @@
 matrix = [[1, 0, 8],
           [3, 4, 1],
           [0, 4, 2]]
-          
+
 # Выполнить поворот (транспонирование) матрицы
 # Пример. Результат:
 # matrix_rotate = [[1, 3, 0],
@@ -12,6 +12,9 @@ matrix = [[1, 0, 8],
 #                  [8, 1, 2]]
 
 # Суть сложности hard: Решите задачу в одну строку
+
+# комментарий про решение в одну строку к первой или второй задаче относился?
+print([list(map(lambda x: x[i], matrix)) for i in range(len(matrix))])
 
 # Задание-2:
 # Найдите наибольшее произведение пяти последовательных цифр в 1000-значном числе.
@@ -39,6 +42,9 @@ number = """
 05886116467109405077541002256983155200055935729725
 71636269561882670428252483600823257530420752963450"""
 
+import re
+
+print(5 * int(re.findall(r'(?=(\d))\1{5}', number)[0]), number.find(5 * re.findall(r'(?=(\d))\1{5}', number)[0]))
 
 # Задание-3 (Ферзи):
 # Известно, что на доске 8×8 можно расставить 8 ферзей так, чтобы они не били
@@ -47,3 +53,81 @@ number = """
 # Программа получает на вход восемь пар чисел,
 # каждое число от 1 до 8 — координаты 8 ферзей.
 # Если ферзи не бьют друг друга, выведите слово NO, иначе выведите YES.
+
+
+
+# тут решить в одну строку не смог
+import random
+
+# получить координаты диагональных клеток от текущей позиции
+def get_diagonals(ferz_pos):
+    result = []
+
+    x, y = ferz_pos
+    while x  > 0 and y > 0:
+        x = x - 1
+        y = y - 1
+        result.append([x, y])
+
+    x, y = ferz_pos
+    while x  < 9 and y > 0:
+        x = x + 1
+        y = y - 1
+        result.append([x, y])
+
+    x, y = ferz_pos
+    while x  > 0 and y < 9:
+        x = x - 1
+        y = y + 1
+        result.append([x, y])
+
+    x, y = ferz_pos
+    while x  < 9 and y < 9:
+        x = x + 1
+        y = y + 1
+        result.append([x, y])
+
+    return result
+
+def output_desk(positions):
+    for i in range(1, 9):
+        line = ''
+        for j in range(1, 9):
+            if [i, j] in positions:
+                line = line + '|@'
+            else:
+                line = line + '|_'
+        print(line)
+
+def have_peresechenie(positions):
+    peresechenie = 0
+    for ferz_pos in positions:
+        other_positions = [x for x in positions if x != ferz_pos]
+        # проверим есть ли другие ферзи по вертикали
+        if ferz_pos[0] in [i[0] for i in other_positions]:
+            peresechenie = 1
+            break
+
+        # проверим есть ли другие ферзи по горизонтали
+        if ferz_pos[1] in [i[1] for i in other_positions]:
+            peresechenie = 1
+            break
+
+        diagonals_pos = get_diagonals(ferz_pos)
+        if any(x in other_positions for x in diagonals_pos):
+            peresechenie = 1
+            break
+
+    if peresechenie == 1:
+        print('YES')
+    else:
+        print('NO')
+
+
+positions = [[random.randint(1, 8), random.randint(1, 8)] for i in range(1, 9)]
+output_desk(positions)
+have_peresechenie(positions)
+
+positions = [[1,1], [2,8], [3,2], [4,7], [5,3], [8,4]]  # смог расставить только 6 ферзей
+output_desk(positions)
+have_peresechenie(positions)
