@@ -18,10 +18,8 @@ class Figure(object):
         triangles = []
         if len(coords) > 3:
             triangles.append((coords[0],coords[1],coords[2]))
-            i = 3
-            for point in coords[3:]:
+            for i in range(3, len(coords)):
                 triangles.append((coords[0],coords[i-1],coords[i]))
-                i += 1
         else:
             triangles.append(coords)
 
@@ -33,7 +31,6 @@ class Figure(object):
                     (triangle[0][0] - triangle[2][0]) * (triangle[1][1] - triangle[2][1])
                 ) / 2)
         self._square = square
-
 
     def factory(coords):
         if len(coords) == 3:
@@ -96,7 +93,7 @@ class EqualBarrel(Figure):
 
 figure_2 = Figure.factory(((0, 0), (5, 15), (10, 15), (15, 0)))
 print(figure_2.name)
-print(figure_2.is_EqualBarrel())
-print(figure_2.sides)
-print(figure_2.perimeter)
-print(figure_2.square)
+print('является ли фигура равнобочной трапецией: ', figure_2.is_EqualBarrel())
+print('длины сторон: ', figure_2.sides)
+print('периметр: ', figure_2.perimeter)
+print('площадь: ', figure_2.square)
