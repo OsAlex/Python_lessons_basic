@@ -57,3 +57,124 @@
 модуль random: http://docs.python.org/3/library/random.html
 
 """
+
+import os
+import random
+
+class Bochonok:
+    """
+    Объект-итератор
+    """
+    def __init__(self, amount=90):
+        self.i = 1
+        self.bochonki = [x for x in range(1,amount+1)]
+        self.outed = []
+    # Объект считается итератором - если у него есть метод __next__
+
+    def __next__(self):
+        self.i += 1
+        if self.i <= 91:
+        	y = random.randint(0, len(self.bochonki)-1)
+        	bochonok = self.bochonki[y]
+        	print(len(self.bochonki), len(self.outed))
+        	self.outed.append(self.bochonki[y])
+        	self.bochonki.remove(self.bochonki[y])
+        	return bochonok
+        else:
+            raise StopIteration
+
+
+class Meshochek:
+    """
+    Объект, поддерживающий интерфейс итерации
+    """
+    def __init__(self, amount=90):
+        self.amount = amount
+
+    def __iter__(self):
+        # Метод __iter__ должен возвращать объект итератор
+        return Bochonok(self.amount)
+
+class Bilet(object):
+	"""tring for Bilet"""
+	def __init__(self, title):
+		super(Bilet, self).__init__()
+		self.title = title
+		self.striked = []
+		self.data = []
+		for x in range(0,9):
+			self.data.append([])
+			self.data[x] = []
+		for y in range(0,3):
+			for x in range(0,9):
+				self.data[x].append(self.getRanfom(x))
+		for x in range(0,9):
+			self.data[x].sort()
+
+		self.all = []
+		for x in range(0,9):
+			self.all = self.all + self.data[x]
+
+		print(self.all)
+		
+	def __str__(self):
+		result = '{:-^40}'.format(self.title) + "\n"
+		for y in range(0,3):
+			for x in range(0,9):
+				if self.data[x][y] in self.striked:
+					result += '\033[4m' + '{:^4}'.format(self.data[x][y]) + '\033[0m'
+				else:
+					result += '{:^4}'.format(self.data[x][y])
+			result += "\n"
+		result += '-'*40 + "\n"
+
+		return result
+
+	def getRanfom(self,x):
+		regen = True
+		while regen:
+			y = random.randint(x*10, (x+1)*10)
+			y = 1 if y == 0 else y
+			regen = False
+			for d in range(0,9):
+				if y in self.data[d]:
+					regen = True
+		return y
+
+bilet_player = Bilet('Your bilet')
+bilet_comp = Bilet('Computer bilet')
+meshochek = Meshochek()
+win = False
+
+for bochonok in meshochek:
+	print("\n"*100)
+	print('New bochonok: ', bochonok)
+	print(bilet_player)
+	print(bilet_comp)
+	print('Check bochonok?(y/n)')
+	checks = ['y', 'n']
+	check = ''
+	while check not in checks:
+		check = input()
+
+	if check == 'y' and bochonok in bilet_player.all:
+		bilet_player.striked.append(bochonok)
+
+	if (check == 'y' and bochonok not in bilet_player.all) or (check == 'n' and bochonok in bilet_player.all):
+			print('Game Over!')
+			break;
+
+	if bochonok in bilet_comp.all:   # computer never missed
+		bilet_comp.striked.append(bochonok)
+
+	if len(bilet_player.striked) == len(bilet_player.all):
+		win = True
+		break
+
+	if len(bilet_comp.striked) == len(bilet_comp.all):
+		break
+
+if win:
+	print('You WIN! Your prize aaaaaaaaaautomobile!')
+else:
+	print('You lose!')
